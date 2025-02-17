@@ -1,20 +1,21 @@
+package com.examly.springapp.entities;
+
+import jakarta.persistence.*;
 import java.util.List;
 
-import javax.annotation.Generated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-public class User{
-    
+@Entity
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private String name;
+    private String username;
     private String email;
+    private String password;
 
-    @OneToMany(mappedBy = "User")
-    private List<Book> books;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Ordertable> orders;
+
+    // Getters and Setters
 }
