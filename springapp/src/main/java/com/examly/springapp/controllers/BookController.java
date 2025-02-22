@@ -2,6 +2,8 @@ package com.examly.springapp.controllers;
 
 import com.examly.springapp.entities.Book;
 import com.examly.springapp.services.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,37 +11,29 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/books")
-public class BookController {
-    private final BookService bookService;
+@RequestMapping("/books")
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+public class BookController {
+
+    @Autowired
+    private BookService bookService;
 
     @PostMapping
     public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        return ResponseEntity.status(201).body(bookService.createBook(book));
+        Book createdBook = bookService.createBook(book);
+        return ResponseEntity.ok(createdBook);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Book>> getBookById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+        Optional<Book> book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
     }
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
-    }
-
-    @GetMapping("/genre/{genre}")
-    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable String genre) {
-        return ResponseEntity.ok(bookService.getBooksByGenre(genre));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
-        return ResponseEntity.ok(bookService.updateBook(id, book));
+        List<Book> books = bookService.getAllBooks();
+        return ResponseEntity.ok(books);
     }
 
     @DeleteMapping("/{id}")
@@ -47,4 +41,23 @@ public class BookController {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/genre/{genre}")
+    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable String genre) {
+        List<Book> books = bookService.getBooksByGenre(genre);
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/sorted")
+    public ResponseEntity<List<Book>> getAllBooksSorted(@RequestParam String sortBy) {
+        List<Book> books = bookService.getAllBooksSorted(sortBy);
+        return ResponseEntity.ok(books);
+    }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<Book>> getBooksWithPagination(@RequestParam int page, @RequestParam int size) {
+        Page<Book> books = bookService.getBooksWithPagination(page, size);
+        return ResponseEntity.ok(books);
+    }                               
 }
+
