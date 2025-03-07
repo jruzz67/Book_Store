@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,14 +17,13 @@ public class Book {
     private String genre;
     private String description;
     private double price;
+    @ManyToOne
+    private User user;
     public void setUser(User user) {
-        throw new UnsupportedOperationException("Unimplemented method 'setUser'");
+        this.user=user;
     }
-    public Book getUser() {
-        throw new UnsupportedOperationException("Unimplemented method 'getUser'");
-    }
-    public String getUsername() {
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    public User getUser() {
+        return this.user;
     }
     public String getTitle(){
         return this.title;
