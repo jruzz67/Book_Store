@@ -1,4 +1,4 @@
-package com.examly.springapp.config;
+package com.examly.springapp.configuration;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
