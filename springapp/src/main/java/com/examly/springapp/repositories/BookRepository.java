@@ -1,39 +1,14 @@
-package com.examly.springapp.services;
+package com.examly.springapp.repositories;
 
 import com.examly.springapp.entities.Book;
-import com.examly.springapp.repositories.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
-
-@Service
-public class BookService {
-@Autowired
-private BookRepository bookRepository;
-public Book createBook(Book book) {
-    return bookRepository.save(book);
-}
-public Optional<Book> getBookById(Long id) {
-    return bookRepository.findById(id);
-}
-public List<Book> getAllBooks() {
-    return bookRepository.findAll();
-}
-public void deleteBook(Long id) {
-    bookRepository.deleteById(id);
-}
-public List<Book> getBooksByGenre(String genre) {
-    return bookRepository.findByGenre(genre);
-}
-public List<Book> getAllBooksSorted(String sortBy) {
-    return bookRepository.findAll(Sort.by(Sort.Order.asc(sortBy)));
-}
-public Page<Book> getBooksWithPagination(int page, int size) {
-    return bookRepository.findAll(PageRequest.of(page, size));
-}
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+    List<Book> findByGenre(String genre);
+     @Query("SELECT b FROM Book b WHERE b.title = :title")
+         List<Book> findBooksByTitle(@Param("title") String title);
 }
