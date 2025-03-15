@@ -2,6 +2,9 @@
 package com.examly.springapp.entities;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 import java.util.List;
 
@@ -16,6 +19,8 @@ public class User {
     private String username;
     private String email;
     private String password;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Book> books;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
