@@ -12,8 +12,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("My API")
+                        .title("Enhanced E-Commerce Book Application API")
                         .version("1.0")
-                        .description("API documentation using Swagger"));
+                        .description("API documentation for the book e-commerce application"));
     }
 }
