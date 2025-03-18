@@ -5,10 +5,12 @@ import com.examly.springapp.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/books/{bookId}/reviews")
+@RequestMapping("/api/books/{bookId}/reviews")
 public class ReviewController {
 
     @Autowired
@@ -17,10 +19,11 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Review> createReview(
             @PathVariable Long bookId,
-            @RequestParam Long userId,
             @RequestParam int rating,
             @RequestParam String comment) {
-        Review createdReview = reviewService.createReview(bookId, userId, rating, comment);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        Review createdReview = reviewService.createReview(bookId, username, rating, comment);
         return ResponseEntity.status(201).body(createdReview);
     }
 
@@ -30,26 +33,29 @@ public class ReviewController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sortBy) {
-        Page<Review> reviews = reviewService.getReviewsByBookId(bookId, page, size, sortBy);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        Page<Review> reviews = reviewService.getReviewsByBookId(bookId, username, page, size, sortBy);
         return ResponseEntity.ok(reviews);
     }
 
-    @PutMapping("/{reviewId}/moderate")
-    public ResponseEntity<Review> moderateReview(
+    @PutMapping("/{reviewId}/approve")
+    public ResponseEntity<Review> approveReview(
             @PathVariable Long bookId,
-            @PathVariable Long reviewId,
-            @RequestParam Long userId,
-            @RequestParam boolean approved) {
-        Review review = reviewService.moderateReview(reviewId, userId, approved);
+            @PathVariable Long reviewId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        Review review = reviewService.approveReview(reviewId, bookId, username);
         return ResponseEntity.ok(review);
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Long bookId,
-            @PathVariable Long reviewId,
-            @RequestParam Long userId) {
-        reviewService.deleteReview(reviewId, userId);
+            @PathVariable Long reviewId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        reviewService.deleteReview(reviewId, bookId, username);
         return ResponseEntity.noContent().build();
     }
 }

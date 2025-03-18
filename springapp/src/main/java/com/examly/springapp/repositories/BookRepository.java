@@ -10,14 +10,20 @@ import java.util.List;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    // Remove or comment out the problematic method
-    // List<Book> findByGenre(String genre); // This causes the error
+    @Query("SELECT b FROM Book b WHERE b.title = :title")
+    List<Book> findBooksByTitle(@Param("title") String title);
 
-    // Updated method to search within the genres collection
+    @Query("SELECT b FROM Book b WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))")
+    List<Book> findByTitleContainingIgnoreCase(@Param("title") String title);
+
+    @Query("SELECT b FROM Book b WHERE LOWER(b.author) LIKE LOWER(CONCAT('%', :author, '%'))")
+    List<Book> findByAuthorContainingIgnoreCase(@Param("author") String author);
+
     @Query("SELECT b FROM Book b JOIN b.genres g WHERE g = :genre")
     List<Book> findByGenresContaining(@Param("genre") String genre);
 
-    // Existing method
-    @Query("SELECT b FROM Book b WHERE b.title = :title")
-    List<Book> findBooksByTitle(@Param("title") String title);
+    @Query("SELECT b FROM Book b WHERE b.price BETWEEN :minPrice AND :maxPrice")
+    List<Book> findByPriceBetween(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
+
+    List<Book> findByPriceGreaterThan(Double price);
 }

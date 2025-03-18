@@ -25,19 +25,15 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.status(201).body(userService.createUser(user));
+        System.out.println("Received user registration: " + user.getUsername() + ", Raw password: " + user.getPassword());
+        return ResponseEntity.status(201).body(userService.createUser(user)); // Let service handle hashing
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User loginRequest) {
         try {
-            org.springframework.security.core.userdetails.UserDetails userDetails = 
-                userService.loadUserByUsername(loginRequest.getUsername());
-            if (bCryptPasswordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
-                // Remove the call to getUserById since we don't need the ID for login
-                return ResponseEntity.ok("Login successful");
-            }
-            return ResponseEntity.status(401).body("Invalid credentials");
+            String token = userService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+            return ResponseEntity.ok(token); // Return the JWT token
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(401).body("Invalid credentials: " + e.getMessage());
         } catch (Exception e) {

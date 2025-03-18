@@ -10,7 +10,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -18,11 +18,6 @@ public class Cart {
     private List<CartItem> cartItems = new ArrayList<>();
 
     private Double totalCost;
-
-    @Column(name = "is_default")
-    private boolean isDefault;
-
-    private String name;
 
     // Getters and setters
     public Long getId() { return id; }
@@ -33,8 +28,4 @@ public class Cart {
     public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
     public Double getTotalCost() { return totalCost; }
     public void setTotalCost(Double totalCost) { this.totalCost = totalCost; }
-    public boolean isDefault() { return isDefault; }
-    public void setDefault(boolean isDefault) { this.isDefault = isDefault; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 }

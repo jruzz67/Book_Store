@@ -17,35 +17,64 @@ public class BookService {
     private BookRepository bookRepository;
 
     public Book createBook(Book book) {
+        if (book.getReviews() == null || book.getReviews().isEmpty()) {
+            book.setNumberOfReviews(0);
+            book.setAverageRating(0.0);
+        } else {
+            book.recalculateMetrics();
+        }
         return bookRepository.save(book);
     }
 
     public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
+        Optional<Book> book = bookRepository.findById(id);
+        book.ifPresent(Book::recalculateMetrics);
+        return book;
     }
 
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        List<Book> books = bookRepository.findAll();
+        books.forEach(Book::recalculateMetrics);
+        return books;
     }
 
     public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+        bookRepository.deleteById(id); // Author check is now in the controller
     }
 
     public List<Book> getBooksByGenre(String genre) {
-        return bookRepository.findByGenresContaining(genre); // Updated method
+        List<Book> books = bookRepository.findByGenresContaining(genre);
+        books.forEach(Book::recalculateMetrics);
+        return books;
     }
 
     public List<Book> getAllBooksSorted(String sortBy) {
-        return bookRepository.findAll(Sort.by(Sort.Order.asc(sortBy)));
+        List<Book> books = bookRepository.findAll(Sort.by(Sort.Order.asc(sortBy)));
+        books.forEach(Book::recalculateMetrics);
+        return books;
     }
 
     public Page<Book> getBooksWithPagination(int page, int size) {
-        return bookRepository.findAll(PageRequest.of(page, size));
+        Page<Book> bookPage = bookRepository.findAll(PageRequest.of(page, size));
+        bookPage.getContent().forEach(Book::recalculateMetrics);
+        return bookPage;
     }
 
-    // Add method to search by title (optional, based on repository)
-    public List<Book> getBooksByTitle(String title) {
-        return bookRepository.findBooksByTitle(title);
+    public List<Book> searchByTitle(String title) {
+        List<Book> books = bookRepository.findByTitleContainingIgnoreCase(title);
+        books.forEach(Book::recalculateMetrics);
+        return books;
+    }
+
+    public List<Book> searchByAuthor(String author) {
+        List<Book> books = bookRepository.findByAuthorContainingIgnoreCase(author);
+        books.forEach(Book::recalculateMetrics);
+        return books;
+    }
+
+    public List<Book> filterByPriceRange(Double minPrice, Double maxPrice) {
+        List<Book> books = bookRepository.findByPriceBetween(minPrice, maxPrice);
+        books.forEach(Book::recalculateMetrics);
+        return books;
     }
 }

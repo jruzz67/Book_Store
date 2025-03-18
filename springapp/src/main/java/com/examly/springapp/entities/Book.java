@@ -21,24 +21,16 @@ public class Book {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Review> reviews;
-
-    @ManyToMany(mappedBy = "books")
-    @JsonIgnore
-    private List<Ordertable> orders;
+    private List<Review> reviews = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "book_genres", joinColumns = @JoinColumn(name = "book_id"))
     @Column(name = "genre")
     private List<String> genres = new ArrayList<>();
 
-    @Transient
-    private int numberOfReviews;
+    private Integer numberOfReviews;
+    private Double averageRating;
 
-    @Transient
-    private double averageRating;
-
-    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -53,12 +45,10 @@ public class Book {
     public void setUser(User user) { this.user = user; }
     public List<Review> getReviews() { return reviews; }
     public void setReviews(List<Review> reviews) { this.reviews = reviews; }
-    public List<Ordertable> getOrders() { return orders; }
-    public void setOrders(List<Ordertable> orders) { this.orders = orders; }
     public List<String> getGenres() { return genres; }
     public void setGenres(List<String> genres) { this.genres = genres; }
 
-    public int getNumberOfReviews() {
+    public Integer getNumberOfReviews() {
         if (reviews == null || reviews.isEmpty()) {
             return 0;
         }
@@ -67,11 +57,11 @@ public class Book {
                 .count();
     }
 
-    public void setNumberOfReviews(int numberOfReviews) {
+    public void setNumberOfReviews(Integer numberOfReviews) {
         this.numberOfReviews = numberOfReviews;
     }
 
-    public double getAverageRating() {
+    public Double getAverageRating() {
         if (reviews == null || reviews.isEmpty()) {
             return 0.0;
         }
@@ -82,7 +72,12 @@ public class Book {
                 .orElse(0.0);
     }
 
-    public void setAverageRating(double averageRating) {
+    public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public void recalculateMetrics() {
+        this.numberOfReviews = getNumberOfReviews();
+        this.averageRating = getAverageRating();
     }
 }

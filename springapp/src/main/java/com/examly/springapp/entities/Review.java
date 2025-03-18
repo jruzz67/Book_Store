@@ -22,9 +22,8 @@ public class Review {
     private User user;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt; // Add this field for sorting by date
+    private LocalDateTime createdAt;
 
-    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public int getRating() { return rating; }
