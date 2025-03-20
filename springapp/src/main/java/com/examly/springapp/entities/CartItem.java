@@ -1,5 +1,6 @@
 package com.examly.springapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +12,7 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
+    @JsonBackReference
     private Cart cart;
 
     @ManyToOne
@@ -19,7 +21,6 @@ public class CartItem {
 
     private Integer quantity;
 
-    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Cart getCart() { return cart; }

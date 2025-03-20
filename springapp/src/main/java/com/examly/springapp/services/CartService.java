@@ -81,10 +81,14 @@ public class CartService {
             newItem.setBook(book);
             newItem.setQuantity(quantity);
             cart.getCartItems().add(newItem);
+            // Ensure bidirectional relationship
+            newItem.setCart(cart);
         }
 
         updateTotalCost(cart);
-        return cartRepository.save(cart);
+        Cart savedCart = cartRepository.save(cart);
+        System.out.println("Cart saved with ID: " + savedCart.getId() + ", Items: " + savedCart.getCartItems().size());
+        return savedCart;
     }
 
     public Cart removeBookFromCart(User user, Long bookId, Integer quantity) {
