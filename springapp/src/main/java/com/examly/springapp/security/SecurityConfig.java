@@ -40,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .cors().and()
             .authorizeRequests()
-            .antMatchers("/api/users/register", "/api/users/login", "/api/users/logout").permitAll()
+            .antMatchers("/api/users/register", "/api/users/login").permitAll()
+            .antMatchers("/api/users/logout").authenticated() // Require authentication for logout
             .antMatchers("/api/books", "/api/books/{id}", "/api/books/genre/{genre}", "/api/books/title/{title}", "/api/books/author/{author}", "/api/books/price-range", "/api/books/sorted", "/api/books/pagination").permitAll()
             .antMatchers("/api/books/*/reviews").permitAll()
             .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()

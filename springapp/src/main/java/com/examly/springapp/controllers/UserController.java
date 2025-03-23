@@ -3,6 +3,7 @@ package com.examly.springapp.controllers;
 import com.examly.springapp.entities.User;
 import com.examly.springapp.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,26 +50,29 @@ public class UserController {
 
     @PostMapping("/logout")
     @Operation(summary = "Logout a user", description = "Logs out the authenticated user (client should discard the JWT token)")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<String> logout() {
-        // Clear the security context (optional, since JWT is stateless)
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logout successful");
     }
 
     @GetMapping
     @Operation(summary = "Get all users", description = "Returns a list of all users")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a user by ID", description = "Returns a user by their ID")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a user", description = "Updates a user by their ID")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updatedUser);
@@ -76,6 +80,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user", description = "Deletes a user by their ID")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
