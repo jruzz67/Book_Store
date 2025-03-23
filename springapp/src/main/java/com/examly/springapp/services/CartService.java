@@ -36,6 +36,9 @@ public class CartService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private EmailService emailService; // Added for email notifications
+
     private static final int MAX_TOTAL_QUANTITY = 10;
 
     public Cart getOrCreateCart(User user) {
@@ -148,6 +151,9 @@ public class CartService {
 
         order.getOrderItems().addAll(orderItems);
         orderRepository.save(order);
+
+        // Send email notification after order creation
+        emailService.sendOrderConfirmation(user.getEmail(), order.getId(), order.getTotalAmount());
 
         cart.getCartItems().clear();
         cart.setTotalCost(0.0);
